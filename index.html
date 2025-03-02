@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Attendance Calculator</title>
+  <style>
+    /* Global reset and font */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* Page background and layout */
+    body {
+      background: linear-gradient(120deg, #74b9ff, #a29bfe);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Container styling */
+    .calculator-container {
+      background-color: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      width: 400px;
+      max-width: 90%;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 1rem;
+      color: #2d3436;
+    }
+
+    /* Labels and inputs */
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #2d3436;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 0.5rem;
+      margin-bottom: 1rem;
+      border: 1px solid #b2bec3;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+
+    /* Button styling */
+    button {
+      width: 100%;
+      padding: 0.75rem;
+      border: none;
+      border-radius: 4px;
+      background-color: #6c5ce7;
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-bottom: 1rem;
+    }
+    button:hover {
+      background-color: #341f97;
+    }
+
+    /* Results box */
+    #results {
+      background-color: #dfe6e9;
+      padding: 1rem;
+      border-radius: 4px;
+      font-size: 0.95rem;
+      color: #2d3436;
+      line-height: 1.5;
+      min-height: 60px; /* so it doesn't collapse when empty */
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator-container">
+    <h1>Attendance Calculator</h1>
+    
+    <label for="reqPercentage">Required Percentage:</label>
+    <input type="number" id="reqPercentage" value="75">
+    
+    <label for="present">Present Classes:</label>
+    <input type="number" id="present" value="111">
+    
+    <label for="total">Total Classes:</label>
+    <input type="number" id="total" value="128">
+    
+    <button onclick="calculateAttendance()">Calculate</button>
+    
+    <div id="results"></div>
+  </div>
+  
+  <script>
+    function calculateAttendance() {
+      const reqPercentage = parseFloat(document.getElementById('reqPercentage').value);
+      const present = parseInt(document.getElementById('present').value, 10);
+      const total = parseInt(document.getElementById('total').value, 10);
+
+      // Current attendance percentage
+      const currentPercent = (present / total) * 100;
+
+      // The formula to find how many more classes you can miss (x):
+      //   present / (total + x) = (reqPercentage / 100)
+      //   => x = (present / (reqPercentage/100)) - total
+      let x = Math.floor((present / (reqPercentage / 100)) - total);
+
+      // If x < 0, it means you're already at or below the threshold
+      // or can't afford to bunk any more classes.
+      if (x < 0) {
+        x = 0;
+      }
+
+      // After bunking x classes
+      const newTotal = total + x;
+      const newAttendance = (present / newTotal) * 100;
+
+      // Build the result text
+      let resultText = "";
+      resultText += `<strong>Current Attendance:</strong> ${present}/${total} = ${currentPercent.toFixed(2)}%<br>`;
+      resultText += `<strong>You can bunk for:</strong> ${x} more day(s).<br>`;
+      resultText += `<strong>Attendance Then:</strong> ${present}/${newTotal} = ${newAttendance.toFixed(2)}%`;
+
+      document.getElementById('results').innerHTML = resultText;
+    }
+  </script>
+</body>
+</html>
